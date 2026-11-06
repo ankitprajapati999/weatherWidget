@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="background-overlay"></div>
+
+    <main class="widget-container">
+        <!-- Search & Quick Navigation -->
+        <header class="search-section">
+            <div class="search-bar-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="search" id="search-bar" placeholder="Enter city name..." autofocus autocomplete="off">
+                <button id="search-btn" aria-label="Search weather">Search</button>
+            </div>
+            
+            <div class="quick-cities">
+                <button class="city-tag" data-city="London">London</button>
+                <button class="city-tag" data-city="New York">New York</button>
+                <button class="city-tag" data-city="Tokyo">Tokyo</button>
+                <button class="city-tag" data-city="Mumbai">Mumbai</button>
+            </div>
+        </header>
+
+        <!-- Inline Error Display -->
+        <div id="error-message" class="error-banner hidden">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span id="error-text">City not found. Please try again.</span>
+        </div>
+
+        <!-- Initial Placeholder State -->
+        <div id="placeholder" class="placeholder-state">
+            <i class="fa-solid fa-compass"></i>
+            <p>Type a city or select a quick tag above to view metrics.</p>
+        </div>
+
+        <!-- Main Content Area -->
+        <section id="weather-data" class="weather-content hidden">
+            <!-- Location & Primary Temp Banner -->
+            <div class="primary-card">
+                <div class="location-header">
+                    <div>
+                        <h2 id="city-name">--</h2>
+                        <p id="time" class="time-stamp">--</p>
+                    </div>
+                    <span id="condition-badge" class="badge">--</span>
+                </div>
+
+                <div class="hero-temp-wrapper">
+                    <img id="weather-icon" src="" alt="Weather condition icon">
+                    <div class="hero-temp-text">
+                        <span id="temp-val" class="main-degree">--°</span>
+                        <p class="feels-like">Feels like <strong id="feels-like-val">--°C</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-tile">
+                    <div class="tile-header">
+                        <i class="fa-solid fa-wind"></i>
+                        <span>Wind</span>
+                    </div>
+                    <strong id="wind-val" class="tile-value">--</strong>
+                    <small id="wind-dir" class="tile-sub">--</small>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="tile-header">
+                        <i class="fa-solid fa-droplet"></i>
+                        <span>Humidity</span>
+                    </div>
+                    <strong id="humidity-val" class="tile-value">--</strong>
+                    <small id="dewpoint-val" class="tile-sub">Dew: --°C</small>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="tile-header">
+                        <i class="fa-solid fa-sun"></i>
+                        <span>UV Index</span>
+                    </div>
+                    <strong id="uv-val" class="tile-value">--</strong>
+                    <small id="uv-status" class="tile-sub">--</small>
+                </div>
+
+                <div class="metric-tile">
+                    <div class="tile-header">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <span>Pressure</span>
+                    </div>
+                    <strong id="pressure-val" class="tile-value">--</strong>
+                    <small id="vis-val" class="tile-sub">Vis: -- km</small>
+                </div>
+            </div>
+
+            <!-- Air Quality Footer Banner -->
+            <div class="aqi-card">
+                <div class="aqi-info">
+                    <i class="fa-solid fa-smog"></i>
+                    <div>
+                        <strong>Air Quality (PM2.5)</strong>
+                        <p id="aqi-status" class="aqi-sub">--</p>
+                    </div>
+                </div>
+                <span id="aqi-val" class="aqi-pill">--</span>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
