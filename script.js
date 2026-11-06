@@ -1,4 +1,4 @@
-const APIkey = "";
+const APIkey = process.env.WEATHER_API_KEY;
 
 const searchInput = document.getElementById("search-bar");
 const searchButton = document.getElementById("search-btn");
