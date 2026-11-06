@@ -1,5 +1,6 @@
 const searchInput = document.getElementById("search-bar");
 const searchButton = document.getElementById("search-btn");
+const geoButton = document.getElementById("geo-btn");
 const cityTags = document.querySelectorAll(".city-tag");
 
 const weatherContainer = document.getElementById("weather-data");
@@ -26,17 +27,49 @@ const visVal = document.getElementById("vis-val");
 const aqiVal = document.getElementById("aqi-val");
 const aqiStatus = document.getElementById("aqi-status");
 
+// Automatically try to get user's location on page load
+window.addEventListener("DOMContentLoaded", () => {
+    getUserLocation();
+});
+
+function getUserLocation() {
+    if (!navigator.geolocation) {
+        showError(true, "Geolocation is not supported by your browser. Please search manually.");
+        return;
+    }
+
+    setLoadingState(true, "Locating...");
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            // WeatherAPI accepts latitude and longitude combined as "lat,lon" in the 'q' parameter
+            fetchWeatherData(`${lat},${lon}`);
+        },
+        (error) => {
+            setLoadingState(false);
+            // If user denies permission, fail gracefully without showing a harsh error — just leave the search bar ready
+            if (error.code === error.PERMISSION_DENIED) {
+                console.log("User denied location access. Falling back to manual search.");
+            } else {
+                showError(true, "Unable to retrieve your location. Try searching a city.");
+            }
+        },
+        { timeout: 10000 }
+    );
+}
+
 async function fetchWeatherData(query) {
     showError(false);
     setLoadingState(true);
 
     try {
-        // Calls your Vercel serverless function route securely
         const response = await fetch(`/api/weather?city=${encodeURIComponent(query)}`);
         const data = await response.json();
         
         if (!response.ok) {
-            throw new Error(data.error?.message || "City not found. Try another.");
+            throw new Error(data.error?.message || "Location not found. Try another.");
         }
 
         renderWeather(data);
@@ -79,9 +112,9 @@ function renderWeather(data) {
 }
 
 // Helpers
-function setLoadingState(isLoading) {
+function setLoadingState(isLoading, customText = "Search") {
     if (isLoading) {
-        searchButton.innerText = "Loading...";
+        searchButton.innerText = customText;
         searchButton.disabled = true;
     } else {
         searchButton.innerText = "Search";
@@ -122,6 +155,11 @@ searchInput.addEventListener("keypress", (e) => {
         const query = searchInput.value.trim();
         if (query) fetchWeatherData(query);
     }
+});
+
+// GPS crosshair button click listener to re-attempt location fetching
+geoButton.addEventListener("click", () => {
+    getUserLocation();
 });
 
 // Quick tags click handlers

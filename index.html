@@ -16,8 +16,10 @@
         <header class="search-section">
             <div class="search-bar-wrapper">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="search" id="search-bar" placeholder="Enter city name..." autofocus autocomplete="off">
+                <input type="search" id="search-bar" placeholder="Enter city name..." autocomplete="off">
                 <button id="search-btn" aria-label="Search weather">Search</button>
+                <!-- Quick GPS button to re-detect location -->
+                <button id="geo-btn" title="Use my current location"><i class="fa-solid fa-location-crosshairs"></i></button>
             </div>
             
             <div class="quick-cities">
@@ -34,10 +36,10 @@
             <span id="error-text">City not found. Please try again.</span>
         </div>
 
-        <!-- Initial Placeholder State -->
+        <!-- Initial Placeholder State (Shown if geolocation is denied and no search is made yet) -->
         <div id="placeholder" class="placeholder-state">
             <i class="fa-solid fa-compass"></i>
-            <p>Type a city or select a quick tag above to view metrics.</p>
+            <p>Allow location access or search a city to view weather metrics.</p>
         </div>
 
         <!-- Main Content Area -->
