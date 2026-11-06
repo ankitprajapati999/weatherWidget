@@ -1,5 +1,3 @@
-const APIkey = process.env.WEATHER_API_KEY;
-
 const searchInput = document.getElementById("search-bar");
 const searchButton = document.getElementById("search-btn");
 const cityTags = document.querySelectorAll(".city-tag");
@@ -33,15 +31,14 @@ async function fetchWeatherData(query) {
     setLoadingState(true);
 
     try {
-        const response = await fetch(
-            `https://api.weatherapi.com/v1/current.json?key=${APIkey}&q=${encodeURIComponent(query)}&aqi=yes`
-        );
+        // Calls your Vercel serverless function route securely
+        const response = await fetch(`/api/weather?city=${encodeURIComponent(query)}`);
+        const data = await response.json();
         
         if (!response.ok) {
-            throw new Error(response.status === 400 ? "City not found. Try another." : "Unable to fetch data.");
+            throw new Error(data.error?.message || "City not found. Try another.");
         }
 
-        const data = await response.json();
         renderWeather(data);
     } catch (err) {
         showError(true, err.message);
