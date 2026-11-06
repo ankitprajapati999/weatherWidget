@@ -1,6 +1,5 @@
 const searchInput = document.getElementById("search-bar");
 const searchButton = document.getElementById("search-btn");
-const geoButton = document.getElementById("geo-btn");
 const cityTags = document.querySelectorAll(".city-tag");
 
 const weatherContainer = document.getElementById("weather-data");
@@ -27,7 +26,7 @@ const visVal = document.getElementById("vis-val");
 const aqiVal = document.getElementById("aqi-val");
 const aqiStatus = document.getElementById("aqi-status");
 
-// Automatically try to get user's location on page load
+// Automatically get user's location on page load
 window.addEventListener("DOMContentLoaded", () => {
     getUserLocation();
 });
@@ -44,12 +43,10 @@ function getUserLocation() {
         (position) => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
-            // WeatherAPI accepts latitude and longitude combined as "lat,lon" in the 'q' parameter
             fetchWeatherData(`${lat},${lon}`);
         },
         (error) => {
             setLoadingState(false);
-            // If user denies permission, fail gracefully without showing a harsh error — just leave the search bar ready
             if (error.code === error.PERMISSION_DENIED) {
                 console.log("User denied location access. Falling back to manual search.");
             } else {
@@ -62,7 +59,7 @@ function getUserLocation() {
 
 async function fetchWeatherData(query) {
     showError(false);
-    setLoadingState(true);
+    setLoadingState(true, "Searching...");
 
     try {
         const response = await fetch(`/api/weather?city=${encodeURIComponent(query)}`);
@@ -105,10 +102,15 @@ function renderWeather(data) {
     pressureVal.innerText = `${data.current.pressure_mb} mb`;
     visVal.innerText = `Visibility: ${data.current.vis_km} km`;
 
-    // AQI
-    const pm25 = data.current.air_quality.pm2_5.toFixed(1);
-    aqiVal.innerText = pm25;
-    aqiStatus.innerText = getAQIDescription(pm25);
+    // AQI Safety Check
+    if (data.current.air_quality && data.current.air_quality.pm2_5 !== undefined) {
+        const pm25 = data.current.air_quality.pm2_5.toFixed(1);
+        aqiVal.innerText = pm25;
+        aqiStatus.innerText = getAQIDescription(pm25);
+    } else {
+        aqiVal.innerText = "N/A";
+        aqiStatus.innerText = "Air Quality unavailable";
+    }
 }
 
 // Helpers
@@ -116,9 +118,11 @@ function setLoadingState(isLoading, customText = "Search") {
     if (isLoading) {
         searchButton.innerText = customText;
         searchButton.disabled = true;
+        searchButton.style.opacity = "0.7";
     } else {
         searchButton.innerText = "Search";
         searchButton.disabled = false;
+        searchButton.style.opacity = "1";
     }
 }
 
@@ -157,16 +161,13 @@ searchInput.addEventListener("keypress", (e) => {
     }
 });
 
-// GPS crosshair button click listener to re-attempt location fetching
-geoButton.addEventListener("click", () => {
-    getUserLocation();
-});
-
 // Quick tags click handlers
 cityTags.forEach((tag) => {
     tag.addEventListener("click", () => {
         const city = tag.getAttribute("data-city");
-        searchInput.value = city;
-        fetchWeatherData(city);
+        if (city) {
+            searchInput.value = city;
+            fetchWeatherData(city);
+        }
     });
 });
